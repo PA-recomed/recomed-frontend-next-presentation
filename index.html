@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>RecoMed Frontend Architecture</title>
+
+		<link rel="stylesheet" href="reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="reveal.js/dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>What is wrong?</h2>
+						<ul>
+							<li>messy, hard to understand how it works</li>
+							<li>business logic is leaking everywhere</li>
+							<li>whitelabels are hard-coded</li>
+							<li>deprecated technologies: jQuery 2 / compass</li>
+							<li>slow</li>
+							<li>bad developer experience / slow build</li>
+							<li>Automated tests?</li>
+						</ul>
+				</section>
+				<section>
+					<h2>HTML is our BFF</h2>
+				</section>
+				<section>
+					<h2>BFF</h2>
+					<ul>
+						<li>Backend For Frontend</li>
+						<li>Hide JSON API from hostile users</li>
+						<li>Glue between JSON API and browser</li>
+					</ul>
+				</section>
+				<section>
+					<h2>HTML</h2>
+					<ul>
+						<li>HyperText Markup Language</li>
+						<li>Hypermedia API (HTML over HTTP, over the wire)</li>
+						<li><a href="https://htmx.org/essays/hateoas/" target="blank">HATEOS model (Hypermedia as the Engine of Application State)</a></li>
+					</ul>
+				</section>
+				<section>
+					<img src="./fer-next.png" />
+				</section>
+
+				<section>
+					<h2>The SPA is closed</h2>
+					<ul>
+						<li>JavaScript should not render HTML</li>
+						<li>JavaScript should be used to enhance HTML pages</li>
+						<li>SPA is the right tool for complex UI</li>
+						<li>but is overkill for simpler UI (RMCP)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>But, but</h2>
+					<p>This is the 21st century<br />we do not want to load a new page everytime we click on a link</p>
+				</section>
+				
+				<section>
+					<h2>Stack</h2>
+					<ul>
+						<li>HOWL: Hypertext On Whatever (back end) you'd Like</li>
+						<li>
+							BFF (Backend For Frontend):
+							<ul>
+								<li>node/typescript/express.s (or fastify.js)</li>
+								<li>python/flask (or django)</li>
+								<li>rails?</li>
+							</ul>
+						</li>
+						<li>Browser code (Frontend):
+							<ul>
+								<li>RMCP: htmx / vanilla js (es module in the browser) / alpine.js? / preact?</li>
+								<li>RMPP: react / kendo-react</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>htmx</h2>
+					<p>
+						htmx allows you to access AJAX, CSS Transitions, WebSockets and Server Sent Events directly in HTML, using attributes, so you can build modern user interfaces with the simplicity and power of hypertext.
+						<br />
+						htmx is small (~10k min.gz'd), dependency-free, extendable & IE11 compatible
+					</p>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```	
+						<!-- Load from unpkg -->
+						<script src="https://unpkg.com/htmx.org@1.6.1"></script>
+						<!-- have a button POST a click via AJAX -->
+						<button hx-post="/clicked" hx-swap="outerHTML">
+						Click Me
+						</button>
+						```
+					</textarea>
+				</section>
+				
+				<section>
+					<h2>WhiteLabel Creator</h2>
+					<ul>
+						<li>New FE Arch and WL Creator development must happen in parallel</li>
+						<li>OPS team is responsible for WL management using the django ops app (name, search options, appointment form options, ...)</li>
+						<li>Settings stored in a database then generated in a JSON stored in S3</li>
+						<li>Static assets stored in S3</li>
+					</ul>
+				</section>
+				<section>
+					<img src="./fer-next-widget.png" />
+				</section>
+			
+				<section>
+					<h2>Do we need SCSS?</h2>
+					<h3>CSS3 is great!</h3>
+					<ul>
+						<li>Grid system <a href="http://getskeleton.com/" target="blank">with a minimalist mobile-first css framework</a></li>
+						<li><a href="https://caniuse.com/css-variables" target="blank">Variables</a> and <a href="https://caniuse.com/css-filters" target="blank">filters</a>!</li>
+						<li>No nesting yet</li>
+					</ul>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```	
+						# recomed.css
+						:root {
+							--primary-color: green;
+						}
+
+						# base.css
+						button {
+							background-color: var(--primary-color);
+							filter: brightness(0.4);
+						}
+						```
+					</textarea>
+				</section>
+
+				<section>
+					<h2>Resources</h2>
+					<ul>
+						<li>Every essays at <a href="https://htmx.org/talk/" target="blank">htmx.org</a></li>
+					</ul>
+				</section>
+			</div>
+		</div>
+
+		<script src="reveal.js/dist/reveal.js"></script>
+		<script src="reveal.js/plugin/notes/notes.js"></script>
+		<script src="reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
